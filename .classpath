@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/asm-3.1.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jackson-core-asl-1.5.5.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jackson-jaxrs-1.5.5.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jackson-mapper-asl-1.5.5.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jackson-xc-1.5.5.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jersey-client-1.5.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jersey-core-1.5.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jersey-json-1.5.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jersey-server-1.5.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jettison-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jsr311-api-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jaxb-ri-20091104/lib/activation.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jaxb-ri-20091104/lib/jaxb1-impl.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jaxb-ri-20091104/lib/jaxb-api.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jaxb-ri-20091104/lib/jaxb-impl.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jaxb-ri-20091104/lib/jaxb-xjc.jar"/>
+	<classpathentry kind="lib" path="C:/REST/jaxb-ri-20091104/lib/jsr173_1.0_api.jar"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>

@@ -1,0 +1,14 @@
+<!-- Indices written at Wed, 9 Mar 2011 15:17:20 UTC -->
+
+<datastore-indexes>
+
+    <!-- Used 3 times in query history -->
+    <datastore-index kind="EventItem" ancestor="true" source="auto">
+        <property name="eventItems_INTEGER_IDX" direction="asc"/>
+    </datastore-index>
+
+	<datastore-index kind="Event" ancestor="true" source="auto">
+        <property name="events_INTEGER_IDX" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>
