@@ -1,6 +1,5 @@
 package com.fabula.timeline.service.rest.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
