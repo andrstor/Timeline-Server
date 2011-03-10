@@ -1,5 +1,6 @@
 package com.fabula.timeline.service.rest.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -47,8 +48,8 @@ public class TimelineResource {
  
  @SuppressWarnings("unchecked")
 @PUT
- @Consumes("application/xml")
- @Produces("application/xml")
+ @Consumes({"application/json", "application/xml"})
+ @Produces({"application/json", "application/xml"})
  @Path("/event/") 
  public Event putEvent(Event event) {
 	 PersistenceManager pm = PMF.get().getPersistenceManager(); 
@@ -91,8 +92,8 @@ public class TimelineResource {
   */
  
  @PUT
- @Consumes("application/xml")
- @Produces("application/xml")
+ @Consumes({"application/json", "application/xml"})
+ @Produces({"application/json", "application/xml"})
  @Path("/experience/") 
  public Experience putExperience(Experience experience) {
      PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -112,20 +113,22 @@ public class TimelineResource {
  
  @SuppressWarnings("unchecked")
  @GET
- @Produces("text/plain")
+ @Produces({"application/json", "application/xml"})
  @Path("/experiences/") 
- public String GetExperiences() {
+ public Experiences GetExperiences() {
      PersistenceManager pm = PMF.get().getPersistenceManager();
      String query = "select from " + Experience.class.getName();
      List<Experience> experiences = (List<Experience>) pm.newQuery(query).execute();
+     Experiences es = new Experiences(experiences);
 
 	
- return "DB inneholder "+experiences.size()+" experiencer, med "+experiences.get(0).getEvents().size()+" eventItems";
+// return "DB inneholder "+experiences.size()+" experiencer, med "+experiences.get(0).getEvents().size()+" eventItems";
+     return es;
  } 
  
  @PUT
- @Consumes("application/xml")
- @Produces("application/xml")
+ @Consumes({"application/json", "application/xml"})
+ @Produces({"application/json", "application/xml"})
  @Path("/experiences/") 
  public Experiences putExperiences(Experiences experiences) {
      PersistenceManager pm = PMF.get().getPersistenceManager();

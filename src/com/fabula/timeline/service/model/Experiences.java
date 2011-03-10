@@ -1,6 +1,7 @@
 package com.fabula.timeline.service.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -20,24 +21,24 @@ public class Experiences {
 
 
 	
-	private ArrayList<Experience> experiences;
+	private List<Experience> experiences;
 	
 	/**
 	 * No-arg constructor for JAXB
 	 */
 	public Experiences(){}
 	
-	public Experiences(ArrayList<Experience> experiences) {
+	public Experiences(List<Experience> experiences) {
 		this.experiences = experiences;
 	}
 
 	@XmlElementWrapper(name="experiences")
 	@XmlElements(value = { @XmlElement(name="experience", type=Experience.class) })
-	public ArrayList<Experience> getExperiences() {
+	public List<Experience> getExperiences() {
 		return experiences;
 	}
 
-	public void setExperiences(ArrayList<Experience> experiences) {
+	public void setExperiences(List<Experience> experiences) {
 		this.experiences = experiences;
 	}
 	

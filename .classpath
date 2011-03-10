@@ -4,10 +4,6 @@
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/asm-3.1.jar"/>
-	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jackson-core-asl-1.5.5.jar"/>
-	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jackson-jaxrs-1.5.5.jar"/>
-	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jackson-mapper-asl-1.5.5.jar"/>
-	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jackson-xc-1.5.5.jar"/>
 	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jersey-client-1.5.jar"/>
 	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jersey-core-1.5.jar"/>
 	<classpathentry kind="lib" path="C:/REST/jersey-archive-1.5/lib/jersey-json-1.5.jar"/>
@@ -20,5 +16,8 @@
 	<classpathentry kind="lib" path="C:/REST/jaxb-ri-20091104/lib/jaxb-impl.jar"/>
 	<classpathentry kind="lib" path="C:/REST/jaxb-ri-20091104/lib/jaxb-xjc.jar"/>
 	<classpathentry kind="lib" path="C:/REST/jaxb-ri-20091104/lib/jsr173_1.0_api.jar"/>
+	<classpathentry kind="lib" path="C:/Anders/My Dropbox/Masteroppgave/Oppsett/REST-libs/REST/jackson-core-asl-1.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Anders/My Dropbox/Masteroppgave/Oppsett/REST-libs/REST/jackson-jaxrs-1.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Anders/My Dropbox/Masteroppgave/Oppsett/REST-libs/REST/jackson-mapper-asl-1.7.4.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
