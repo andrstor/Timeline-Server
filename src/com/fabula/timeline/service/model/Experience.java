@@ -3,20 +3,17 @@ package com.fabula.timeline.service.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import com.google.appengine.api.datastore.Key;
 
 /**
  * 
@@ -30,16 +27,18 @@ public class Experience {
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Key key;
+    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    private String encodedKey;
 
     @Persistent
+    @Extension(vendorName="datanucleus",value="true", key = "gae.pk-name")
 	private String id;
 	@Persistent
 	private String title;
 	@Persistent
 	private boolean shared;
 	@Persistent
-	private String username;
+	private String creator;
 	@Persistent
 	private List<Event> events;
 	
@@ -50,33 +49,32 @@ public class Experience {
 		this.id = id;
 		this.title = title;
 		this.shared = shared;
-		this.username = username;
+		this.creator = username;
 		this.events = events;
 	}
 	
-	@XmlAttribute
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	@XmlAttribute
-	public String getUsername() {
-		return username;
+	public String getCreator() {
+		return creator;
 	}
+	
 	
 	@XmlTransient
-	public Key getKey() {
-		return key;
+	public String getEncodedKey() {
+		return encodedKey;
 	}
-	
-	public void setKey(Key key) {
-        this.key = key;
-    }
-	
-	public void setUsername(String username) {
-		this.username = username;
+
+	public void setEncodedKey(String encodedKey) {
+		this.encodedKey = encodedKey;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
 	}
 	
 	public String getTitle() {
@@ -93,15 +91,14 @@ public class Experience {
 		this.shared = shared;
 	}
 	
-	@XmlElementWrapper(name="Events")
-	@XmlElements(value = { @XmlElement(name="event", type=Event.class) })
+	@XmlElements(value = { @XmlElement(type=Event.class) })
 	public List<Event> getEvents() {
 		if (events == null) {
 			events = new ArrayList<Event>();
         }
         return this.events;
 	}
-	public void setEvents(ArrayList<Event> events) {
+	public void setEvents(List<Event> events) {
 		this.events = events;
 	}
 
@@ -111,7 +108,7 @@ public class Experience {
 		     StringBuffer sb = new StringBuffer();
 	        sb.append("Exp ID: ").append(getId()+"\n");
 	        sb.append("Exp name: ").append(getTitle()+"\n");
-	        sb.append("Exp creator: ").append(getUsername()+"\n");
+	        sb.append("Exp creator: ").append(getCreator()+"\n");
 	        sb.append("Antall events: ").append(events.size()+"\n\n");
 	        for (Event e : events) {
 	        	 sb.append("Events: ").append(e.toString()+"\n");

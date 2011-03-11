@@ -4,20 +4,26 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.datanucleus.util.Log4JLogger;
+import org.datanucleus.util.NucleusLogger;
+
 import com.fabula.timeline.service.model.Event;
 import com.fabula.timeline.service.model.Experience;
 import com.fabula.timeline.service.model.Experiences;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 @Path("/")
 public class TimelineResource {
-	private static final Logger log =
-	      Logger.getLogger(TimelineResource.class.getName());
+//	private static final NucleusLogger log =
+//	      Log4JLogger.getLoggerInstance(null);
  
 // @GET
 // @Produces("application/xml")
@@ -70,7 +76,7 @@ public class TimelineResource {
     	 }else{
     		 e= results.get(0);
              
-             e.setEmotionList(event.getEmotionItems());
+             e.setEmotionList(event.getEmotionList());
              e.setEventItems(event.getEventItems());
     	 }
     	 
@@ -80,7 +86,7 @@ public class TimelineResource {
          pm.close();
      }
 
-     log.info("Event: "+event.getEventItems().size());
+//     log.info("Event: "+event.getEventItems().size());
 	 System.out.println("Event: "+e.toString());
  return e;
  } 
@@ -114,15 +120,19 @@ public class TimelineResource {
  @GET
  @Produces({"application/json", "application/xml"})
  @Path("/experiences/") 
- public Experiences GetExperiences() {
+ public String GetExperiences() {
      PersistenceManager pm = PMF.get().getPersistenceManager();
-     String query = "select from " + Experience.class.getName();
-     List<Experience> experiences = (List<Experience>) pm.newQuery(query).execute();
-     Experiences es = new Experiences(experiences);
+//     String query = "select from " + Experience.class.getName();
+     Query q = pm.newQuery("select from " + Experience.class.getName());
+     List<Experience> exps = (List) q.execute();
+//     Query query = pm.newQuery(Experience.class);
+//     List<Experience> experiences = (List<Experience>)query.execute();
+//     Experiences es = new Experiences(experiences);
 
 	
-// return "DB inneholder "+experiences.size()+" experiencer, med "+experiences.get(0).getEvents().size()+" eventItems";
-     return es;
+//     log.debug("DB inneholder "+experiences.size()+" experiencer, med "+experiences.get(0).getEvents().size()+" events");
+     
+     return ("DB inneholder "+exps.size()+" experiencer");
  } 
  
  @PUT
@@ -131,7 +141,7 @@ public class TimelineResource {
  @Path("/experiences/") 
  public Experiences putExperiences(Experiences experiences) {
      PersistenceManager pm = PMF.get().getPersistenceManager();
-     
+     Experience exp = null;
      try {
     	 for (Experience experience : experiences.getExperiences()) {
         	 try {

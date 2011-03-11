@@ -4,20 +4,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.NullValue;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import com.google.appengine.api.datastore.Key;
 
 
 @PersistenceCapable
@@ -26,12 +24,14 @@ import com.google.appengine.api.datastore.Key;
 public class Event {
 	
     @PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key key;
+    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    private String encodedKey;
 
     @Persistent
+    @Extension(vendorName="datanucleus",value="true", key = "gae.pk-name")
 	private String id;
-	@Persistent
+	@Persistent(nullValue = NullValue.EXCEPTION)
 	private String experienceid;
 	@Persistent
 	private long datetimemillis;
@@ -56,7 +56,6 @@ public class Event {
 	
 	public Event(){}
 
-	@XmlAttribute
 	public String getId() {
 		return id;
 	}
@@ -65,15 +64,15 @@ public class Event {
 		this.id = id;
 	}
 	
-	@XmlTransient
-	public Key getKey() {
-		return key;
+	
+	public void setEncodedKey(String encodedKey) {
+		this.encodedKey = encodedKey;
 	}
-	
-	public void setKey(Key key) {
-        this.key = key;
-    }
-	
+	@XmlTransient
+	public String getEncodedKey() {
+		return encodedKey;
+	}
+
 	public String getExperienceid() {
 		return experienceid;
 	}
@@ -92,8 +91,7 @@ public class Event {
 		this.datetimemillis = datetimemillis;
 	}
 	
-	@XmlElementWrapper(name="eventItems")
-	@XmlElements(value = { @XmlElement(name="eventItem", type=EventItem.class) })
+	@XmlElements(value = { @XmlElement(type=EventItem.class) })
 	public List<EventItem> getEventItems() {
 		if (eventItems == null) {
 			eventItems = new ArrayList<EventItem>();
@@ -105,9 +103,8 @@ public class Event {
 		this.eventItems = eventItems;
 	}
 	
-	@XmlElementWrapper(name="emotionList")
-	@XmlElements(value = { @XmlElement(name="emotion", type=String.class) })
-	public List<String> getEmotionItems() {
+	@XmlElements(value = { @XmlElement(type=String.class) })
+	public List<String> getEmotionList() {
 		if (emotionList == null) {
 			emotionList = new ArrayList<String>();
         }
@@ -144,7 +141,7 @@ public class Event {
 	        sb.append("Antall items: ").append(eventItems.size()+"\n");
 	        for (EventItem eit : eventItems) {
 	        	 sb.append("EventItem: ").append(eit.getId()+"\n");
-	        	 sb.append("EventItemType: ").append(eit.getTheclass()+"\n");
+	        	 sb.append("EventItemType: ").append(eit.getClassName()+"\n");
 			}
 	        for (String emo : emotionList) {
 	        	sb.append("Emotion: ").append(emo+"\n");

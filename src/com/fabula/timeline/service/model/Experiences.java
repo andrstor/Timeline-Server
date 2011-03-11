@@ -3,7 +3,6 @@ package com.fabula.timeline.service.model;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -31,8 +30,7 @@ public class Experiences {
 		this.experiences = experiences;
 	}
 
-	@XmlElementWrapper(name="experiences")
-	@XmlElements(value = { @XmlElement(name="experience", type=Experience.class) })
+	@XmlElements(value = { @XmlElement(type=Experience.class) })
 	public List<Experience> getExperiences() {
 		return experiences;
 	}

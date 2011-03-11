@@ -1,66 +1,55 @@
 package com.fabula.timeline.service.model;
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class EventItem {
 	
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key key;
+    @PrimaryKey
+    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    private String encodedKey;
 
     @Persistent
+    @Extension(vendorName="datanucleus",value="true", key = "gae.pk-name")
 	private String id;
 	@Persistent
-	private String theclass;
-
-	@Persistent
-	private String username;
+	private String creator;
 	@Persistent
 	private String pictureFilename;
 	@Persistent
 	private String noteTitle;
 	@Persistent
 	private String noteText;
+	@Persistent
+	private String className;
 	
 	public EventItem() {}
 	
-	public EventItem(String id, String user, String theclass, String pictureFilename, String noteTitle, String noteText) {
+	public EventItem(String id, String user, String pictureFilename, String noteTitle, String noteText) {
 		this.id = id;
-		this.username = user;
-		this.theclass = theclass;
+		this.creator = user;
 		this.pictureFilename = pictureFilename;
 		this.noteText = noteText;
 		this.noteTitle = noteTitle;
 	}
 	
-	@XmlAttribute(name="class")
-	public String getTheclass() {
-		return theclass;
-	}
-
-	public void setTheclass(String theclass) {
-		this.theclass = theclass;
-	}
 	
-	@XmlAttribute
-	public String getUsername() {
-		return username;
+	public String getCreator() {
+		return creator;
 	}
-	public void setUsername(String username) {
-		this.username = username;
+	public void setCreator(String username) {
+		this.creator = username;
 	}
 	
 	public String getId() {
@@ -70,15 +59,15 @@ public class EventItem {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
-	@XmlTransient
-	public Key getKey() {
-		return key;
+		
+	public void setEncodedKey(String encodedKey) {
+		this.encodedKey = encodedKey;
 	}
-	
-	public void setKey(Key key) {
-        this.key = key;
-    }
+	@XmlTransient
+	public String getEncodedKey() {
+		return encodedKey;
+	}
+
 	public String getPictureFilename() {
 		return pictureFilename;
 	}
@@ -101,6 +90,14 @@ public class EventItem {
 		this.noteText = noteText;
 	}
 	
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
 	@Override
 	public String toString() {
 		return "EventItem: "+getId();
