@@ -18,34 +18,10 @@ import com.google.appengine.api.datastore.KeyFactory;
 
 @Path("/")
 public class TimelineResource {
-//	private static final NucleusLogger log =
-//	      Log4JLogger.getLoggerInstance(null);
- 
-// @GET
-// @Produces("application/xml")
-// @Path("/employee/{employeeEmail}/") 
-// public Employee getEmployee( @PathParam ("employeeEmail") String email) {
-// //dummy code
-// Employee emp = new Employee();
-// emp.setEmail(email);
-// emp.setFirstName("John");
-// emp.setLastName("Doe");
-// return emp;
-// } 
-// 
-// @PUT
-// @Consumes("application/xml")
-// @Produces("application/xml")
-// @Path("/employee/") 
-// public Employee putEmployee(Employee emp) {
-// //dummy code
-// return emp;
-// } 
 	
  /*
   *  ONE EVENT
   */
-	 
  
 @PUT
  @Consumes({"application/json", "application/xml"})

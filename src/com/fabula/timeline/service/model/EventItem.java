@@ -1,7 +1,5 @@
 package com.fabula.timeline.service.model;
 
-import java.util.Date;
-
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
