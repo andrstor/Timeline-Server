@@ -1,5 +1,7 @@
 package com.fabula.timeline.service.model;
 
+import java.util.Date;
+
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -100,7 +102,12 @@ public class EventItem {
 
 	@Override
 	public String toString() {
-		return "EventItem: "+getId();
+		  StringBuffer sb = new StringBuffer();
+	        sb.append("EventItem ID: ").append(getId()+"\n");
+	        sb.append("EventItem title: ").append(getNoteTitle()+"\n");
+	        sb.append("EventItem text: ").append(getNoteText()+"\n");
+	       
+	    return sb.toString();
 	}
 
 }

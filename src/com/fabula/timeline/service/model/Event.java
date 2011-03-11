@@ -140,8 +140,7 @@ public class Event {
 	        sb.append("LatLng: ").append(getLatitude()+","+getLongitude()+"\n");
 	        sb.append("Antall items: ").append(eventItems.size()+"\n");
 	        for (EventItem eit : eventItems) {
-	        	 sb.append("EventItem: ").append(eit.getId()+"\n");
-	        	 sb.append("EventItemType: ").append(eit.getClassName()+"\n");
+	        	 sb.append("EventItem: ").append(eit.toString()+"\n");
 			}
 	        for (String emo : emotionList) {
 	        	sb.append("Emotion: ").append(emo+"\n");

@@ -1,7 +1,6 @@
 package com.fabula.timeline.service.rest.impl;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -11,14 +10,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.datanucleus.util.Log4JLogger;
-import org.datanucleus.util.NucleusLogger;
-
 import com.fabula.timeline.service.model.Event;
 import com.fabula.timeline.service.model.Experience;
 import com.fabula.timeline.service.model.Experiences;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+
 
 @Path("/")
 public class TimelineResource {
@@ -51,46 +47,60 @@ public class TimelineResource {
   */
 	 
  
- @SuppressWarnings("unchecked")
 @PUT
  @Consumes({"application/json", "application/xml"})
  @Produces({"application/json", "application/xml"})
  @Path("/event/") 
  public Event putEvent(Event event) {
 	 PersistenceManager pm = PMF.get().getPersistenceManager(); 
-	 Event e = null;
      try {
-    	 String query = "select from " + Event.class.getName()+ " where id=='"+event.getId()+"'";
-    	 List<Event> results = (List<Event>) pm.newQuery(query).execute();
-    	 if(results.size()==0){
-    		 e = event;
-    		 //koble til experience
-    		 String q2 = "select from " + Experience.class.getName()+ " where id=='"+e.getExperienceid()+"'";
-        	 List<Experience> r2 = (List<Experience>) pm.newQuery(q2).execute();
-        	 if(r2.size()>0){
-        		 Experience exp = r2.get(0);
-        		 exp.getEvents().add(e);
-        		 pm.makePersistent(exp);
-        	 }
-        		 
+    	 //koble til experience (forutsetter at denne er syncet før)
+    	 String k = KeyFactory.createKeyString(Experience.class.getSimpleName(), event.getExperienceid());
+         Experience exp = pm.getObjectById(Experience.class, k);
+         
+         Event ev =  exp.getEventByID(event.getId());
+    	 if(ev==null){
+    		 exp.getEvents().add(event);
     	 }else{
-    		 e= results.get(0);
-             
-             e.setEmotionList(event.getEmotionList());
-             e.setEventItems(event.getEventItems());
+             ev.setEmotionList(event.getEmotionList());
+             ev.setEventItems(event.getEventItems());
+             event = ev;
     	 }
     	 
-         
-         pm.makePersistent(e);
+    	
+    	 pm.makePersistent(exp);
+    	 pm.makePersistent(event);
      } finally {
          pm.close();
      }
 
-//     log.info("Event: "+event.getEventItems().size());
-	 System.out.println("Event: "+e.toString());
- return e;
+	 System.out.println("Event: "+event.toString());
+	 return event;
  } 
  
+/*
+ *  ALL EVENTS
+ */
+	 
+
+@GET
+@Consumes({"application/json", "application/xml"})
+@Produces({"application/json", "application/xml"})
+@Path("/events/") 
+public String getEvents() {
+	PersistenceManager pm = PMF.get().getPersistenceManager();
+    Query q = pm.newQuery("select from " + Event.class.getName());
+    List<Event> evs = (List) q.execute();
+    
+    String events = "";
+    	
+    for (Event event : evs) {
+		events += event.toString();
+	}
+
+    
+    return events;
+} 
  
  /*
   *  ONE EXPERIENCE
@@ -122,13 +132,9 @@ public class TimelineResource {
  @Path("/experiences/") 
  public String GetExperiences() {
      PersistenceManager pm = PMF.get().getPersistenceManager();
-//     String query = "select from " + Experience.class.getName();
      Query q = pm.newQuery("select from " + Experience.class.getName());
      List<Experience> exps = (List) q.execute();
-//     Query query = pm.newQuery(Experience.class);
-//     List<Experience> experiences = (List<Experience>)query.execute();
-//     Experiences es = new Experiences(experiences);
-
+     pm.close();
 	
 //     log.debug("DB inneholder "+experiences.size()+" experiencer, med "+experiences.get(0).getEvents().size()+" events");
      
@@ -141,7 +147,6 @@ public class TimelineResource {
  @Path("/experiences/") 
  public Experiences putExperiences(Experiences experiences) {
      PersistenceManager pm = PMF.get().getPersistenceManager();
-     Experience exp = null;
      try {
     	 for (Experience experience : experiences.getExperiences()) {
         	 try {

@@ -116,4 +116,13 @@ public class Experience {
 	       
 	        return sb.toString();
 	}
+
+	public Event getEventByID(String id2) {
+		for (Event event : getEvents()) {
+			if(event.getId().equals(id2))
+				return event;
+		}
+
+		return null;
+	}
 }
