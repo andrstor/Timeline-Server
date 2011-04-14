@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-@PersistenceCapable
+@PersistenceCapable(detachable="true")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class EventItem {
@@ -26,7 +26,7 @@ public class EventItem {
 	@Persistent
 	private String creator;
 	@Persistent
-	private String pictureFilename;
+	private String filename;
 	@Persistent
 	private String noteTitle;
 	@Persistent
@@ -39,7 +39,7 @@ public class EventItem {
 	public EventItem(String id, String user, String pictureFilename, String noteTitle, String noteText) {
 		this.id = id;
 		this.creator = user;
-		this.pictureFilename = pictureFilename;
+		this.filename = pictureFilename;
 		this.noteText = noteText;
 		this.noteTitle = noteTitle;
 	}
@@ -68,12 +68,12 @@ public class EventItem {
 		return encodedKey;
 	}
 
-	public String getPictureFilename() {
-		return pictureFilename;
+	public String getFilename() {
+		return filename;
 	}
 
-	public void setPictureFilename(String pictureFilename) {
-		this.pictureFilename = pictureFilename;
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 	public String getNoteTitle() {
 		return noteTitle;

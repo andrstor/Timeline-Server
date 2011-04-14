@@ -1,6 +1,5 @@
 package com.fabula.timeline.service.model;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 
-@PersistenceCapable
+@PersistenceCapable(detachable="true")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Event {
@@ -38,20 +37,31 @@ public class Event {
 	@Persistent
 	private List<EventItem> eventItems;
 	@Persistent
-	private List<String> emotionList;
+	private List<Emotion> emotionList;
 	@Persistent
 	private String latitude;
 	@Persistent
 	private String longitude;
+	@Persistent
+	private boolean shared;
+	@Persistent
+	private int mood;
+	@Persistent
+	private String className;
+	@Persistent
+	private String creator;
+//	@Persistent
+//	private List<String> tags;
 
 	
-	public Event(String id, String experienceid, long datetimeinmillis, ArrayList<EventItem> eventItems, String latitude, String longitude) {
+	public Event(String id, String experienceid, long datetimeinmillis, List<EventItem> eventItems, String latitude, String longitude, boolean shared) {
 		this.id = id;
 		this.experienceid = experienceid;
 		this.datetimemillis = datetimeinmillis;
 		this.eventItems = eventItems;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.shared = shared;
 	}
 	
 	public Event(){}
@@ -91,11 +101,11 @@ public class Event {
 		this.datetimemillis = datetimemillis;
 	}
 	
-	@XmlElements(value = { @XmlElement(type=EventItem.class) })
+	@XmlElements(value = { @XmlElement(name="eventItems",type=EventItem.class) })
 	public List<EventItem> getEventItems() {
-		if (eventItems == null) {
-			eventItems = new ArrayList<EventItem>();
-        }
+//		if (eventItems == null) {
+//			eventItems = new ArrayList<EventItem>();
+//        }
         return this.eventItems;
 	}
 	
@@ -103,18 +113,27 @@ public class Event {
 		this.eventItems = eventItems;
 	}
 	
-	@XmlElements(value = { @XmlElement(type=String.class) })
-	public List<String> getEmotionList() {
-		if (emotionList == null) {
-			emotionList = new ArrayList<String>();
-        }
+	@XmlElements(value = { @XmlElement(type=Emotion.class) })
+	public List<Emotion> getEmotionList() {
+//		if (emotionList == null) {
+//			emotionList = new ArrayList<String>();
+//        }
         return this.emotionList;
 	}
 	
-	public void setEmotionList(List<String> emotionList) {
+	public void setEmotionList(List<Emotion> emotionList) {
 		this.emotionList = emotionList;
 	}
 	
+//	@XmlElements(value = { @XmlElement(type=String.class) })
+//	public List<String> getTags() {
+//		return tags;
+//	}
+//
+//	public void setTags(List<String> tags) {
+//		this.tags = tags;
+//	}
+
 	public String getLatitude() {
 		return latitude;
 	}
@@ -131,19 +150,52 @@ public class Event {
 		this.longitude = longitude;
 	}
 
+	public boolean isShared() {
+		return shared;
+	}
+
+	public void setShared(boolean shared) {
+		this.shared = shared;
+	}
+
+	public int getMood() {
+		return mood;
+	}
+
+	public void setMood(int mood) {
+		this.mood = mood;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
 	@Override
 	public String toString() {
 		     StringBuffer sb = new StringBuffer();
 	        sb.append("Event ID: ").append(getId()+"\n");
 	        sb.append("Exp ID: ").append(getExperienceid()+"\n");
+	        sb.append("Creator: ").append(getCreator()+"\n");
 	        sb.append("Date: ").append(new Date(getDatetimemillis())+"\n");
 	        sb.append("LatLng: ").append(getLatitude()+","+getLongitude()+"\n");
 	        sb.append("Antall items: ").append(eventItems.size()+"\n");
 	        for (EventItem eit : eventItems) {
 	        	 sb.append("EventItem: ").append(eit.toString()+"\n");
 			}
-	        for (String emo : emotionList) {
-	        	sb.append("Emotion: ").append(emo+"\n");
+	        for (Emotion emo : emotionList) {
+	        	sb.append("Emotion: ").append(emo.getEmotionType().getName()+"\n");
 			}
 	       
 	        return sb.toString();

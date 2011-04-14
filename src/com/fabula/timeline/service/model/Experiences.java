@@ -1,5 +1,6 @@
 package com.fabula.timeline.service.model;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -13,18 +14,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author andekr
  *
  */
-@XmlRootElement(name="timeline")
+@XmlRootElement
 public class Experiences {
 
-
-
-	
 	private List<Experience> experiences;
 	
 	/**
 	 * No-arg constructor for JAXB
 	 */
-	public Experiences(){}
+	public Experiences(){
+		this.experiences = new LinkedList<Experience>();
+	}
 	
 	public Experiences(List<Experience> experiences) {
 		this.experiences = experiences;

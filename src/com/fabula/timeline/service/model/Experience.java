@@ -15,12 +15,14 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.google.appengine.api.datastore.KeyFactory;
+
 /**
  * 
  * @author andekr
  *
  */
-@PersistenceCapable
+@PersistenceCapable(detachable="true")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Experience {
@@ -39,18 +41,20 @@ public class Experience {
 	private boolean shared;
 	@Persistent
 	private String creator;
-	@Persistent
 	private List<Event> events;
+	@Persistent
+	private String sharingGroup;;
 	
 
 	public Experience() {}
 	
-	public Experience(String id, String title, boolean shared, String username, ArrayList<Event> events) {
+	public Experience(String id, String title, boolean shared, String username, List<Event> events, String sharingGroup) {
 		this.id = id;
 		this.title = title;
 		this.shared = shared;
 		this.creator = username;
 		this.events = events;
+		this.sharingGroup = sharingGroup;
 	}
 	
 	public String getId() {
@@ -63,6 +67,9 @@ public class Experience {
 		return creator;
 	}
 	
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
 	
 	@XmlTransient
 	public String getEncodedKey() {
@@ -73,9 +80,7 @@ public class Experience {
 		this.encodedKey = encodedKey;
 	}
 
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
+	
 	
 	public String getTitle() {
 		return title;
@@ -91,29 +96,52 @@ public class Experience {
 		this.shared = shared;
 	}
 	
-	@XmlElements(value = { @XmlElement(type=Event.class) })
+	@XmlElements(value = { @XmlElement(name="events", type=Event.class) })
 	public List<Event> getEvents() {
-		if (events == null) {
-			events = new ArrayList<Event>();
-        }
+//		if (events == null) {
+//			events = new ArrayList<Event>();
+//        }
         return this.events;
 	}
 	public void setEvents(List<Event> events) {
-		this.events = events;
+		if(events.size()>0)
+			this.events = events;
+	}
+		
+	public String getSharingGroup() {
+		return sharingGroup;
 	}
 
+	public void setSharingGroup(String sharingGroup) {
+		this.sharingGroup = sharingGroup;
+	}
 	
+	public List<Event> getMoodEvents() {
+		ArrayList<Event> moodEvents = new ArrayList<Event>();
+		
+		for (Event moodEvent : getEvents()) {
+			if(moodEvent.getClassName().equals("MoodEvent"))
+				moodEvents.add(moodEvent);
+		}
+		
+		
+        return moodEvents;
+	}
+	
+
 	@Override
 	public String toString() {
 		     StringBuffer sb = new StringBuffer();
 	        sb.append("Exp ID: ").append(getId()+"\n");
 	        sb.append("Exp name: ").append(getTitle()+"\n");
 	        sb.append("Exp creator: ").append(getCreator()+"\n");
-	        sb.append("Antall events: ").append(events.size()+"\n\n");
+	        sb.append("Antall events: ").append(events.size()+"\n");
 	        for (Event e : events) {
 	        	 sb.append("Events: ").append(e.toString()+"\n");
 			}
-	       
+	        sb.append("Shared : ").append(isShared()+"\n");
+	        sb.append("Shared with: ").append(getSharingGroup()+"\n");
+	        
 	        return sb.toString();
 	}
 
@@ -124,5 +152,15 @@ public class Experience {
 		}
 
 		return null;
+	}
+
+	public boolean hasMember(User user) {
+		for (String groupID : user.getMemberOfGroups()) {
+			String k = KeyFactory.createKeyString(Group.class.getSimpleName(), sharingGroup);
+			if(k.equals(groupID))
+				return true;
+		}
+			
+		return false;
 	}
 }
