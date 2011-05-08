@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @PersistenceCapable(detachable="true")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class Event {
+public class Event implements Comparable<Event>{
 	
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -45,7 +45,9 @@ public class Event {
 	@Persistent
 	private boolean shared;
 	@Persistent
-	private int mood;
+	private double valence;
+	@Persistent
+	private double arousal;
 	@Persistent
 	private String className;
 	@Persistent
@@ -158,12 +160,20 @@ public class Event {
 		this.shared = shared;
 	}
 
-	public int getMood() {
-		return mood;
+	public double getValence() {
+		return valence;
 	}
 
-	public void setMood(int mood) {
-		this.mood = mood;
+	public void setValence(double valence) {
+		this.valence = valence;
+	}
+
+	public double getArousal() {
+		return arousal;
+	}
+
+	public void setArousal(double arousal) {
+		this.arousal = arousal;
 	}
 
 	public String getClassName() {
@@ -185,20 +195,39 @@ public class Event {
 	@Override
 	public String toString() {
 		     StringBuffer sb = new StringBuffer();
-	        sb.append("Event ID: ").append(getId()+"\n");
-	        sb.append("Exp ID: ").append(getExperienceid()+"\n");
-	        sb.append("Creator: ").append(getCreator()+"\n");
-	        sb.append("Date: ").append(new Date(getDatetimemillis())+"\n");
-	        sb.append("LatLng: ").append(getLatitude()+","+getLongitude()+"\n");
-	        sb.append("Antall items: ").append(eventItems.size()+"\n");
-	        for (EventItem eit : eventItems) {
-	        	 sb.append("EventItem: ").append(eit.toString()+"\n");
-			}
-	        for (Emotion emo : emotionList) {
-	        	sb.append("Emotion: ").append(emo.getEmotionType().getName()+"\n");
-			}
-	       
+		    sb.append("<td valign='top'>");
+	        sb.append("Event created by: ").append(getCreator()+"<br />");
+	        sb.append("Date: ").append(new Date(getDatetimemillis())+"<br />");
+	        sb.append("Position: ").append(getLatitude()+","+getLongitude()+"<br />");
+	        
+	        if(getClassName().equals("Event")){
+	        	if(emotionList.size()>0){
+		        	sb.append("Emotions connected to this event: ");
+		        	for (Emotion emo : emotionList) {
+			        	sb.append("Emotion: ").append(emo.getEmotionType().getName()+"<br />");
+					}
+		        }
+		  
+		        if(eventItems.size()>0){
+		            sb.append("The event contains : ").append(eventItems.size()+" items<br />");
+			        for (EventItem eit : eventItems) {
+			        	 sb.append(eit.toString());
+					}
+		        }
+	        }else if(getClassName().equals("MoodEvent")){
+	        	sb.append("Mood: Valence:"+getValence()+", arousal:"+getArousal());
+	        }
+	        
+	        
+	        sb.append("</td>");
 	        return sb.toString();
+	}
+
+	@Override
+	public int compareTo(Event other) {
+		Date thisDate = new Date(datetimemillis);
+		Date otherDate = new Date(other.getDatetimemillis());
+		return thisDate.compareTo(otherDate);
 	}
 	
 

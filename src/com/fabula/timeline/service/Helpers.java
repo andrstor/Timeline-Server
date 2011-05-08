@@ -1,20 +1,38 @@
 package com.fabula.timeline.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.fabula.timeline.service.model.Event;
+import com.fabula.timeline.service.model.Mood;
 
 public class Helpers {
 
-	public static int getAverageMood(List<Event> moodEvents){
-		int sum = 0;
+	public static Mood getAverageMood(List<Event> moodEvents){
+		double[] sum = new double[2];
+		double[] average = new double[2];
 		
-		for (Event moodEvent : moodEvents) {
-			sum+=moodEvent.getMood();
+		Collections.sort(moodEvents, Collections.reverseOrder());
+		
+		List<Event> lastEvents;
+		
+		if(moodEvents.size()<10){
+			lastEvents = moodEvents.subList(0, moodEvents.size());
+		}else{
+			lastEvents = moodEvents.subList(0, 10);
 		}
-		float floatAverage = ((float)sum/(float)moodEvents.size());
+		
+		
+		for (Event moodEvent : lastEvents) {
+			sum[0] = sum[0]+ moodEvent.getValence();
+			sum[1] = sum[1]+ moodEvent.getArousal();
+		}
+		
+		average[0] = ((float)sum[0]/(float)lastEvents.size());
+		average[1] = ((float)sum[1]/(float)lastEvents.size());
 	
-		return Math.round(floatAverage);
+		Mood moodAverage = new Mood(average[0], average[1]);
+		return moodAverage;
 	}
 	
 	

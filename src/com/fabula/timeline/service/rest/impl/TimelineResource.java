@@ -1,6 +1,8 @@
 package com.fabula.timeline.service.rest.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,11 +15,14 @@ import javax.jdo.Query;
 import javax.jdo.annotations.Transactional;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -32,6 +37,7 @@ import com.fabula.timeline.service.model.Experience;
 import com.fabula.timeline.service.model.Experiences;
 import com.fabula.timeline.service.model.Group;
 import com.fabula.timeline.service.model.Groups;
+import com.fabula.timeline.service.model.Mood;
 import com.fabula.timeline.service.model.User;
 import com.fabula.timeline.service.model.Users;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -47,6 +53,11 @@ import com.google.appengine.api.datastore.KeyFactory;
  */
 @Path("/")
 public class TimelineResource {
+	
+	//ITEM
+	
+	
+	
 	
 	//EVENTS
 	 /*
@@ -67,26 +78,25 @@ public class TimelineResource {
 	 * Example of JSON:
 	 * <br>
 	 * <code>
-	 * {   "className":"Event",
-		   "creator":"anderskri@gmail.com",
-		   "eventItems":[
-		      {
-		         "className":"SimpleNote",
-		         "creator":"anderskri@gmail.com",
-		         "id":"b44f63a4-a17e-468d-bc4f-149430a8aa20",
-		         "noteText":"This is the content of an example note.",
-		         "noteTitle":"This is an example of a note."
-		      }
-		   ],
-		   "experienceid":"13b9b0d2-c8cd-4436-9be3-bddef9ebd5a2",
-		   "id":"d270281e-5579-429d-8570-5de901d52a0f",
-		   "latitude":63.41652922,
-		   "longitude":10.40268466,
-		   "datetimemillis":1301904788593,
-		   "shared":true,
-		   "mood":0,
-		   "average":false
-		}
+	 * {"eventItems":[
+					{"className":"SimpleNote",
+					"creator":"anderskri@gmail.com",
+					"id":"516733c5-ef9e-4324-bd93-ee204a582036",
+					"noteText":"Examplenote","noteTitle":"Example"}
+					],
+				"className":"Event",
+				"creator":"anderskri@gmail.com",
+				"experienceid":"a6a18076-9b96-4952-8bb6-cf56fee7b759",
+				"id":"7f8189b9-11cf-4b8a-9456-29d9359f6dad",
+				"latitude":63.40958633333333,
+				"longitude":10.431676433333333,
+				"moodX":0.0,
+				"moodY":0.0,
+				"datetimemillis":1304362625287,
+				"shared":true,
+				"average":false
+				} 
+
 	 * </code>
 	 * 
 	 */
@@ -310,42 +320,76 @@ public class TimelineResource {
 	 * Produces the all experiences shared with the user as JSON or XML
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
 	@GET
 	@Produces( { "application/json", "application/xml" })
 	@Path("/experiences/{username}")
-	public Experiences GetExperiences(@PathParam("username") String username) {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Experiences exps = new Experiences();
-		List<Experience> experiencesFromServer = null;
-		List<Experience> experiencesToClient= new ArrayList<Experience>();
-		
-		try {
+	@Transactional
+	public Experiences GetSharedExperiences(@PathParam("username") String username) {
+		Experiences exps = GetExperiences(username);
+		Experiences sharedExps = new Experiences();
+
 			User user = getUser(username);
-			Query q = pm.newQuery("select from " + Experience.class.getName());
-			experiencesFromServer = (List) q.execute();
-			for (Experience experience : experiencesFromServer) {
-				pm.detachCopy(experience);
+			for (Experience experience : exps.getExperiences()) {
 				if (experience.isShared() && experience.hasMember(user)) {
-					pm.detachCopyAll(experience.getEvents());
 					for (Event event : experience.getEvents()) {
-						pm.detachCopyAll(event.getEventItems());
-						pm.detachCopyAll(event.getEmotionList());
 						if (!event.isShared()) {
 							experience.getEvents().remove(event);
 						}
 					}
-					experiencesToClient.add(experience);
-				} 
+					sharedExps.getExperiences().add(experience);
+				}
 
+			}
+
+		return sharedExps;
+	}
+	
+	
+	@Transactional
+	public Experiences GetExperiences(String username) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Experiences exps = new Experiences();
+		List<Experience> experiencesFromServer = null;
+
+		try {
+			Query q = pm.newQuery("select from " + Experience.class.getName());
+			experiencesFromServer = (List) q.execute();
+			for (Experience experience : experiencesFromServer) {
+				pm.detachCopy(experience);
+					pm.detachCopyAll(experience.getEvents());
+					for (Event event : experience.getEvents()) {
+						pm.detachCopyAll(event.getEventItems());
+						pm.detachCopyAll(event.getEmotionList());
+					}
 			}
 		} finally {
 			pm.close();
 		}
 
-		exps.setExperiences(experiencesToClient);
+		exps.setExperiences(experiencesFromServer);
 
 		return exps;
+	}
+	
+	@Transactional
+	public Experiences GetAllExperiencesWithSharedEventsAndUsersMoodEvent(String username) {
+		Experiences exps = GetExperiences(username);
+		Experiences sharedExps = new Experiences();
+
+		User user = getUser(username);
+		for (Experience experience : exps.getExperiences()) {
+			if (experience.isShared() && experience.hasMember(user)) {
+				for (Event event : experience.getEvents()) {
+					if (event.getClassName().equals("MoodEvent") && !event.getCreator().equals(username)) {
+						experience.getEvents().remove(event);
+					}
+				}
+				sharedExps.getExperiences().add(experience);
+			} 
+
+		}
+
+	return sharedExps;
 	}
 	
 	/**
@@ -894,11 +938,12 @@ public class TimelineResource {
 	 * 
 	 */
 	@GET
-	@Produces("text/plain")
+//	@Produces("text/plain")
+	@Produces( { "application/json", "application/xml" })
 	@Path("/mood/id/{experienceid}/")
-	public String getAverageMoodByID(@PathParam("experienceid") String experienceid) {
+	public Mood getAverageMoodByID(@PathParam("experienceid") String experienceid) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		int moodAverage = 0;
+		Mood moodAverage = null;
 		Experience experience = null;
 		try {
 			try {
@@ -906,7 +951,7 @@ public class TimelineResource {
 				experience = pm.getObjectById(Experience.class, k);
 				System.out.println(experience);
 				moodAverage = Helpers.getAverageMood(experience.getMoodEvents());
-				//                 
+				               
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
@@ -914,7 +959,7 @@ public class TimelineResource {
 			pm.close();
 		}
 
-		return ""+moodAverage;
+		return moodAverage;
 
 	}
  
@@ -934,11 +979,12 @@ public class TimelineResource {
 	 */
 	@SuppressWarnings("unchecked")
 	@GET
-	@Produces("text/plain")
+//	@Produces("text/plain")
+	@Produces( { "application/json", "application/xml" })
 	@Path("/mood/title/{title}/")
-	public String getAverageMoodByName(@PathParam("title") String title) {
+	public Mood getAverageMoodByName(@PathParam("title") String title) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		int moodAverage = 0;
+		Mood moodAverage = null;
 		List<Experience> experiences = new ArrayList<Experience>();
 		try {
 			try {
@@ -955,7 +1001,19 @@ public class TimelineResource {
 			pm.close();
 		}
 
-		return ""+moodAverage;
+		return moodAverage;
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Produces("text/plain")
+	@Path("rabbit/mood/title/{title}/")
+	public String getRabbitAverageMoodByName(@PathParam("title") String title) {
+		Mood moodAverage = getAverageMoodByName(title);
+		
+
+		return moodAverage.getValence()+","+moodAverage.getArousal();
 
 	}
  
@@ -968,20 +1026,23 @@ public class TimelineResource {
 	 * Uses experience title to identify experience
 	 * <br>
 	 * 
-	 * <b>URL: /mood/title/{title}/{username}/{mood}/</b>
+	 * <b>URL: /mood/title/{title}/{username}/{moodX}/{moodY}</b>
 	 * 
 	 * @param title of experience to insert mood
 	 * @param username of user to set as creator
-	 * @param mood to insert. int from -2 to 2. Very sad to very happy.
+	 * @param valence. Mood valence to insert. Double from 0 to 1. 
+	 * @param arousal. Mood arousal to insert. Double from 0 to 1. 
 	 * @return the created {@link Event}
 	 */
 	@SuppressWarnings("unchecked")
 	@PUT
 	@Produces( { "application/json", "application/xml" })
-	@Path("/mood/title/{title}/{username}/{mood}/")
-	public Event putAverageMoodByName(@PathParam("title") String title,
+	@Path("/mood/title/{title}/{username}/{valence}/{arousal}")
+	public Event putMoodByName(@PathParam("title") String title,
 			@PathParam("username") String username,
-			@PathParam("mood") int mood) {
+			@PathParam("valence") double valence, @PathParam("arousal") double arousal) {
+		
+//		if(valence>=0 && valence <=1 && arousal>=0 && arousal<=1){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		User user = getUser(username);
 		Query q = pm.newQuery("select from " + Experience.class.getName()
@@ -994,8 +1055,11 @@ public class TimelineResource {
 		newMoodEvent.setClassName("MoodEvent");
 		newMoodEvent.setCreator(user.getUsername());
 		newMoodEvent.setDatetimemillis(new Date().getTime());
-		newMoodEvent.setShared(true);
-		newMoodEvent.setMood(mood);
+		newMoodEvent.setShared(false);
+		newMoodEvent.setLatitude("0");
+		newMoodEvent.setLongitude("0");
+		newMoodEvent.setValence(valence);
+		newMoodEvent.setArousal(arousal);
 
 		try {
 			try {
@@ -1009,6 +1073,10 @@ public class TimelineResource {
 		}
 
 		return newMoodEvent;
+		
+//		}
+//		else
+//			return null;
 
 	}
  
@@ -1021,19 +1089,20 @@ public class TimelineResource {
 	 * <br>
 	 * Uses experience id to identify experience
 	 * <br>
-	 * <b>URL: /mood/id/{id}/{username}/{mood}/</b>
+	 * <b>URL: /mood/id/{id}/{username}/{moodX}/{moodY}</b>
 	 * 
 	 * @param id of experience to insert mood
 	 * @param username of user to set as creator
-	 * @param mood to insert. int from -2 to 2. Very sad to very happy.
+	 * @param valence. Mood valence to insert. Double from 0 to 1. 
+	 * @param arousal. Mood arousal to insert. Double from 0 to 1. 
 	 * @return the created {@link Event}
 	 */
 	@PUT
 	@Produces( { "application/json", "application/xml" })
-	@Path("/mood/id/{id}/{username}/{mood}/")
-	public Event putAverageMoodByID(@PathParam("id") String id,
+	@Path("/mood/id/{id}/{username}/{valence}/{arousal}")
+	public Event putMoodByID(@PathParam("id") String id,
 			@PathParam("username") String username,
-			@PathParam("mood") int mood) {
+			@PathParam("valence") double valence, @PathParam("arousal") double arousal) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		User user = getUser(username);
 		String k = KeyFactory.createKeyString(Experience.class.getSimpleName(),
@@ -1045,8 +1114,12 @@ public class TimelineResource {
 		newMoodEvent.setClassName("MoodEvent");
 		newMoodEvent.setCreator(user.getUsername());
 		newMoodEvent.setDatetimemillis(new Date().getTime());
-		newMoodEvent.setShared(true);
-		newMoodEvent.setMood(mood);
+		newMoodEvent.setShared(false);
+		newMoodEvent.setLatitude("0");
+		newMoodEvent.setLongitude("0");
+		newMoodEvent.setValence(valence);
+		newMoodEvent.setArousal(arousal);
+
 
 		try {
 			try {
@@ -1062,6 +1135,57 @@ public class TimelineResource {
 		return newMoodEvent;
 
 	}
+	
+	@GET
+	@Path("/status/{username}/")
+	public String sendStatusMail(@PathParam("username") String username) {
+		  Properties props = new Properties();
+	      Session session = Session.getDefaultInstance(props, null);
+
+	      Experiences exps = GetAllExperiencesWithSharedEventsAndUsersMoodEvent(username);
+
+	      try {
+	          Message msg = new MimeMessage(session);
+	          msg.setFrom(new InternetAddress("timelineapplication@gmail.com", "Timeline Admin"));
+	          msg.addRecipient(Message.RecipientType.TO,
+	                           new InternetAddress(username, "Timeline User"));
+	          
+	          SimpleDateFormat format = new SimpleDateFormat("dd MMMM yyyy");
+	          
+			 msg.setSubject("Your Timeline activity per "+format.format(new Date()));
+			 String msgBody = "<html><body><img src='http://folk.ntnu.no/andekr/upload/header.png' alt='header'/><br />";
+	          msgBody += "<h1>Your Timeline activity report:</h1><br /><br />";
+	          msgBody += "<table border='1' rules='none' frame='box' cellpadding='10' width='800px'>";
+	          for (Experience experience : exps.getExperiences()) {
+				msgBody += experience.toString();
+	          }
+	          msgBody += "</table>";
+	          msgBody +="</body></html>";
+	         
+	          Multipart mp = new MimeMultipart();
+
+	          MimeBodyPart htmlPart = new MimeBodyPart();
+	          htmlPart.setContent(msgBody, "text/html");
+	          mp.addBodyPart(htmlPart);
+	          
+	          msg.setContent(mp);
+	          
+	          Transport.send(msg);
+
+	      } catch (AddressException e) {
+	          // ...
+	      } catch (MessagingException e) {
+	          // ...
+	      } catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+	      return "OK";
+	}
+	
+	
 	
 }
 

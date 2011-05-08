@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fabula.timeline.service.rest.impl.TimelineResource;
 import com.google.appengine.api.datastore.KeyFactory;
 
 /**
@@ -132,15 +133,41 @@ public class Experience {
 	@Override
 	public String toString() {
 		     StringBuffer sb = new StringBuffer();
-	        sb.append("Exp ID: ").append(getId()+"\n");
-	        sb.append("Exp name: ").append(getTitle()+"\n");
-	        sb.append("Exp creator: ").append(getCreator()+"\n");
-	        sb.append("Antall events: ").append(events.size()+"\n");
+		    sb.append("<tr><td colspan ='3'>");
+	        sb.append("<h3>Experience: ").append(getTitle()+"</h3><br />");
+	        sb.append("Created by: ").append(getCreator()+"<br />");
+	        if(isShared()){
+	        TimelineResource res = new TimelineResource();
+	        	sb.append("The experience is shared with: ").append(res.getGroup(getSharingGroup()).getName()+"<br />");
+	        }
+	        sb.append("</td></tr>");
+	        if(events.size()>0){
+	        sb.append("<tr><td colspan ='3'>");
+	        sb.append("<h2><b><font size=12>"+events.size()+"</font></b> events:</h2>");
+	        sb.append("</td></tr>");
+	        int coloumnCounter = 0; 
+	        sb.append("<tr>");
 	        for (Event e : events) {
-	        	 sb.append("Events: ").append(e.toString()+"\n");
+	        	if(coloumnCounter<3){
+		        		sb.append(e.toString());
+	        		coloumnCounter++;
+	        	}else{
+	        			sb.append("</tr><tr>");
+		        		sb.append(e.toString());
+	        		coloumnCounter=1;
+	        	}
+	        	
 			}
-	        sb.append("Shared : ").append(isShared()+"\n");
-	        sb.append("Shared with: ").append(getSharingGroup()+"\n");
+	        //To make the table "complete"
+	        for (int i = coloumnCounter; i < 3; i++) {
+	        	 sb.append("<td/>");
+			}
+	        
+	        sb.append("</tr>");
+	        }
+	        sb.append("<tr><td colspan ='3'>");
+	        sb.append("<hr>");
+	        sb.append("</td></tr>");
 	        
 	        return sb.toString();
 	}

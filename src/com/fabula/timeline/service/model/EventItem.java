@@ -100,10 +100,16 @@ public class EventItem {
 
 	@Override
 	public String toString() {
+		
 		  StringBuffer sb = new StringBuffer();
-	        sb.append("EventItem ID: ").append(getId()+"\n");
-	        sb.append("EventItem title: ").append(getNoteTitle()+"\n");
-	        sb.append("EventItem text: ").append(getNoteText()+"\n");
+	        sb.append("Type of item: ").append(getClassName()+"<br />");
+	        if(getClassName().equals("SimpleNote")){
+	        	sb.append("Note title: ").append(getNoteTitle()+"<br />");
+		        sb.append("Note text: ").append(getNoteText()+"<br />");
+	        }
+	        if(getClassName().equals("SimplePicture")){
+	        	sb.append("<a href='"+getFilename()+"' target='_blank'><img src='"+getFilename()+"' alt='Picture' width='40%' style='border-style: none' /></a><br />");
+	        }
 	       
 	    return sb.toString();
 	}

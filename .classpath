@@ -12,5 +12,20 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-xc-1.7.4.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jersey-json-1.5.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jsr311-api-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/eclipseandroid/configuration/org.eclipse.osgi/bundles/72/data/-1425868640/plugins/com.google.appengine.eclipse.sdkbundle.1.4.2_1.4.2.v201102111810/appengine-java-sdk-1.4.2/lib/user/orm/jdo2-api-2.3-eb.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/eclipseandroid/configuration/org.eclipse.osgi/bundles/72/data/-1425868640/plugins/com.google.appengine.eclipse.sdkbundle.1.4.2_1.4.2.v201102111810/appengine-java-sdk-1.4.2/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/eclipseandroid/configuration/org.eclipse.osgi/bundles/72/data/-1425868640/plugins/com.google.appengine.eclipse.sdkbundle.1.4.2_1.4.2.v201102111810/appengine-java-sdk-1.4.2/lib/shared/servlet-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/eclipseandroid/configuration/org.eclipse.osgi/bundles/72/data/-1425868640/plugins/com.google.appengine.eclipse.sdkbundle.1.4.2_1.4.2.v201102111810/appengine-java-sdk-1.4.2/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/eclipseandroid/configuration/org.eclipse.osgi/bundles/72/data/-1425868640/plugins/com.google.appengine.eclipse.sdkbundle.1.4.2_1.4.2.v201102111810/appengine-java-sdk-1.4.2/lib/user/appengine-api-1.0-sdk-1.4.2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/eclipseandroid/configuration/org.eclipse.osgi/bundles/72/data/-1425868640/plugins/com.google.appengine.eclipse.sdkbundle.1.4.2_1.4.2.v201102111810/appengine-java-sdk-1.4.2/docs/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
