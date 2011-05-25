@@ -52,8 +52,6 @@ public class Event implements Comparable<Event>{
 	private String className;
 	@Persistent
 	private String creator;
-//	@Persistent
-//	private List<String> tags;
 
 	
 	public Event(String id, String experienceid, long datetimeinmillis, List<EventItem> eventItems, String latitude, String longitude, boolean shared) {
@@ -105,9 +103,6 @@ public class Event implements Comparable<Event>{
 	
 	@XmlElements(value = { @XmlElement(name="eventItems",type=EventItem.class) })
 	public List<EventItem> getEventItems() {
-//		if (eventItems == null) {
-//			eventItems = new ArrayList<EventItem>();
-//        }
         return this.eventItems;
 	}
 	
@@ -117,24 +112,12 @@ public class Event implements Comparable<Event>{
 	
 	@XmlElements(value = { @XmlElement(type=Emotion.class) })
 	public List<Emotion> getEmotionList() {
-//		if (emotionList == null) {
-//			emotionList = new ArrayList<String>();
-//        }
         return this.emotionList;
 	}
 	
 	public void setEmotionList(List<Emotion> emotionList) {
 		this.emotionList = emotionList;
 	}
-	
-//	@XmlElements(value = { @XmlElement(type=String.class) })
-//	public List<String> getTags() {
-//		return tags;
-//	}
-//
-//	public void setTags(List<String> tags) {
-//		this.tags = tags;
-//	}
 
 	public String getLatitude() {
 		return latitude;

@@ -138,9 +138,6 @@ public class Group {
 		  StringBuffer sb = new StringBuffer();
 	        sb.append("Group : ").append(this.name+"\n");
 	        sb.append("Members: ").append(membersInGroup.size()+"\n\n");
-//	        for (User user : members) {
-//	        	 sb.append("User: ").append(user+"\n");
-//			}
 	        
 	        return sb.toString();
 	}

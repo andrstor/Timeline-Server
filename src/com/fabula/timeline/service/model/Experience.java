@@ -18,11 +18,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.fabula.timeline.service.rest.impl.TimelineResource;
 import com.google.appengine.api.datastore.KeyFactory;
 
-/**
- * 
- * @author andekr
- *
- */
+
 @PersistenceCapable(detachable="true")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -99,9 +95,6 @@ public class Experience {
 	
 	@XmlElements(value = { @XmlElement(name="events", type=Event.class) })
 	public List<Event> getEvents() {
-//		if (events == null) {
-//			events = new ArrayList<Event>();
-//        }
         return this.events;
 	}
 	public void setEvents(List<Event> events) {

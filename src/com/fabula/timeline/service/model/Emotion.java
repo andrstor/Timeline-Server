@@ -46,19 +46,13 @@ public class Emotion {
 		return emotionid;
 	}
 
-
-
 	public void setEmotionid(String emotionid) {
 		this.emotionid = emotionid;
 	}
 
-
-
 	public EmotionEnum getEmotionType() {
 		return emotionType;
 	}
-
-
 
 	public void setEmotionType(EmotionEnum emotionType) {
 		this.emotionType = emotionType;
@@ -97,6 +91,3 @@ public class Emotion {
 	
  
 }
-
-
-

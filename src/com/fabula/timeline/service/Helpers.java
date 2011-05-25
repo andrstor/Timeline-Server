@@ -8,20 +8,26 @@ import com.fabula.timeline.service.model.Mood;
 
 public class Helpers {
 
+	/**
+	 * This method calculates the average of a list of moods.
+	 * The current algorithm takes the 10 last inserted moods to 
+	 * get the "trend".
+	 * 
+	 * @param moodEvents List of moods to calculate average from 
+	 * @return The average {@link Mood}
+	 */
 	public static Mood getAverageMood(List<Event> moodEvents){
 		double[] sum = new double[2];
 		double[] average = new double[2];
 		
+		//Extracts the 10 last inserted moods into a new List
 		Collections.sort(moodEvents, Collections.reverseOrder());
-		
 		List<Event> lastEvents;
-		
 		if(moodEvents.size()<10){
 			lastEvents = moodEvents.subList(0, moodEvents.size());
 		}else{
 			lastEvents = moodEvents.subList(0, 10);
 		}
-		
 		
 		for (Event moodEvent : lastEvents) {
 			sum[0] = sum[0]+ moodEvent.getValence();

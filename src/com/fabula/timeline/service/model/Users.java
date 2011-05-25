@@ -42,7 +42,7 @@ public class Users {
 	
 	@Override
 	public String toString() {
-		return "Users innholder "+getUsers().size()+" grupper";
+		return "Users contains "+getUsers().size()+" users";
 	}
 	
 	

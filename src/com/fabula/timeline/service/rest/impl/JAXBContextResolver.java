@@ -16,6 +16,15 @@ import com.fabula.timeline.service.model.Users;
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
 
+/**
+ * This context resolver was created to serialize/deserialize JSON with one element correctly.
+ * This way brackets [] are added even if the list contains one element.
+ * All lists must be added to this this context resolver.
+ * 
+ * 
+ * @author andekr
+ *
+ */
 @Provider
 public class JAXBContextResolver implements ContextResolver<JAXBContext> {
 
@@ -30,7 +39,6 @@ public class JAXBContextResolver implements ContextResolver<JAXBContext> {
     	builder.arrays("events");
     	builder.arrays("eventItems");
     	builder.arrays("emotionList");
-//    	builder.arrays("tags");
     	builder.arrays("users");
     	builder.arrays("members");
     	builder.arrays("groups");

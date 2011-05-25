@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Wrapper classs for XML-serialization
+ * Wrapper classs for XML/JSON-serialization
  * 
  * 
  * @author andekr
@@ -45,7 +45,7 @@ public class Groups {
 	
 	@Override
 	public String toString() {
-		return "Groups innholder "+getGroups().size()+" grupper";
+		return "Groups contains "+getGroups().size()+" groups";
 	}
 	
 	

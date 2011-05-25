@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Wrapper classs for XML-serialization
+ * Wrapper classs for XML/JSON-serialization
  * 
  * 
  * @author andekr
